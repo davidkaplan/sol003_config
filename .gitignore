@@ -1,0 +1,14 @@
+.HA_VERSION
+.storage/
+OZW_Log.txt
+appdaemon/
+hassio_tools/
+home-assistant.log
+home-assistant_v2.db
+node-red/
+options.xml
+pyozw.sqlite
+scripts/
+secrets.yaml
+zwscene.xml
+zxcfg_bkup.xml

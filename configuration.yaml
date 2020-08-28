@@ -1,0 +1,91 @@
+mqtt:
+  broker: localhost
+  port: 1883
+  
+#addon_core_zwave:
+#  whitelist_external_dirs:
+#  - /data/ozw/config
+
+#homeassistant:
+#  whitelist_external_dirs:
+#  - /root/config/scripts
+
+#zwave:
+#  usb_path: /dev/serial/by-id/usb-0658_0200-if00
+#  config_path: /config/openzwave/config
+# Example configuration.yaml entry
+
+
+sensor:
+  - platform: mqtt
+    name: ZWaveNode_2
+    state_topic: "OpenZWave/1/node/2/instance/1/commandclass/114/value/1125899954847767/"
+    value_template: '{{ value_json.Value }}'
+    unique_id: ZWaveNode_2
+
+          
+# Configure a default setup of Home Assistant (frontend, api, etc)
+default_config:
+
+# Text to speech
+tts:
+  - platform: google_translate
+
+#group: !include groups.yaml
+automation: !include automations.yaml
+script: !include scripts.yaml
+scene: !include scenes.yaml
+
+light:
+  - platform: group
+    name: Office Lights
+    entities:
+      - light.sw_1_level
+      - light.sw_2_level
+  - platform: template
+    lights:
+      office_lights_template:
+        friendly_name: "Office Lights Template"
+        turn_on:
+          service: script.turn_on_office_lights
+        turn_off:
+          service: script.turn_off_office_lights
+  - platform: group
+    name: Kitchen Lights
+    entities:
+      - light.sw_11_level
+      - light.sw_12_level
+  - platform: template
+    lights:
+      kitchen_lights_template:
+        friendly_name: "Kitchen Lights Template"
+        turn_on:
+          service: script.turn_on_kitchen_lights
+        turn_off:
+          service: script.turn_off_kitchen_lights
+
+# automation:
+#   - alias: Zone1 On
+#     trigger:
+#     - platform: state
+#       entity_id:
+#         - light.sw_1_level
+#         - light.sw_2_level
+#       to: 'on'
+#     action:   
+#     - service: light.turn_on
+#       data:
+#         entity_id: light.office_lights_template
+#         transition: 0
+#   - alias: Zone1 Off
+#     trigger:
+#     - platform: state
+#       entity_id:
+#         - light.sw_1_level
+#         - light.sw_2_level
+#       to: 'off'
+#     action:   
+#     - service: light.turn_off
+#       data:
+#         entity_id: light.office_lights_template
+#         transition: 0

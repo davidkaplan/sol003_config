@@ -1,0 +1,22 @@
+- id: '1595455541321'
+  name: Office Daytime
+  entities:
+    light.lzw31_dimmer_level:
+      friendly_name: 'SW05: Level'
+      node_id: 20
+      state: 'off'
+      supported_features: 33
+    light.lzw31_dimmer_level_2:
+      brightness: 111
+      friendly_name: 'SW06: Level'
+      node_id: 21
+      state: 'on'
+      supported_features: 33
+    light.lzw31_dimmer_level_3:
+      friendly_name: 'SW07: Level'
+      node_id: 22
+      state: 'off'
+      supported_features: 33
+- id: '1598474151717'
+  name: Office Nighttime
+  entities: {}

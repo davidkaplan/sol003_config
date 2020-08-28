@@ -1,0 +1,126 @@
+- id: '1597135386283'
+  alias: Office On Automation
+  description: ''
+  trigger:
+  - device_id: beb9b468154c4396b28e6263a9c29d5d
+    domain: light
+    entity_id: light.sw_1_level
+    platform: device
+    type: turned_on
+  - device_id: 2ecd50f291d945bfb07188db003348f3
+    domain: light
+    entity_id: light.sw_2_level
+    platform: device
+    type: turned_on
+  - device_id: 0d3281fa10024e37977b028b44d3b631
+    domain: binary_sensor
+    entity_id: binary_sensor.zwa005_trisensor_sensor
+    platform: device
+    type: turned_on
+  condition: []
+  action:
+  - data_template:
+      brightness: '{{ trigger.to_state.attributes.brightness }}'
+    service: script.turn_on_office_lights
+  - delay:
+      seconds: 1
+  mode: single
+- id: '1597137681107'
+  alias: Office Off Automation
+  description: ''
+  trigger:
+  - entity_id: light.sw_1_level
+    platform: state
+    to: 'off'
+  - entity_id: light.sw_2_level
+    platform: state
+    to: 'off'
+  - device_id: 0d3281fa10024e37977b028b44d3b631
+    domain: binary_sensor
+    entity_id: binary_sensor.zwa005_trisensor_sensor
+    platform: device
+    type: turned_off
+  condition: []
+  action:
+  - data: {}
+    service: script.turn_off_office_lights
+  mode: single
+- id: '1597177364212'
+  alias: SW10 Turn On
+  description: ''
+  trigger:
+  - device_id: 41823a1558d94f99abfcd3723cd2a078
+    domain: switch
+    entity_id: switch.lzw30_switch_switch
+    platform: device
+    type: turned_on
+  condition: []
+  action:
+  - device_id: 297b1b6240b54d768fa7fae65efbdfa4
+    domain: switch
+    entity_id: switch.zmnhvdx_flush_dimmer_0_10v_switch
+    type: turn_on
+  - device_id: 6c91686cbcfe495683169df473bfcb23
+    domain: switch
+    entity_id: switch.multilevel_power_switch_switch
+    type: turn_on
+  mode: single
+- id: '1597177448278'
+  alias: SW10 Turn Off
+  description: ''
+  trigger:
+  - device_id: 41823a1558d94f99abfcd3723cd2a078
+    domain: switch
+    entity_id: switch.lzw30_switch_switch
+    platform: device
+    type: turned_off
+  condition: []
+  action:
+  - device_id: 297b1b6240b54d768fa7fae65efbdfa4
+    domain: switch
+    entity_id: switch.zmnhvdx_flush_dimmer_0_10v_switch
+    type: turn_off
+  - device_id: 6c91686cbcfe495683169df473bfcb23
+    domain: switch
+    entity_id: switch.multilevel_power_switch_switch
+    type: turn_off
+  mode: single
+- id: '1597178026933'
+  alias: Kitchen Lights On
+  description: ''
+  trigger:
+  - device_id: 35a658320aa44eaca0ed3517731cfa44
+    domain: light
+    entity_id: light.sw_11_level
+    platform: device
+    type: turned_on
+  - device_id: beb47bc78aea4a1e93e84f0747e65bcf
+    domain: light
+    entity_id: light.sw_12_level
+    platform: device
+    type: turned_on
+  condition: []
+  action:
+  - delay: 00:00:02
+  - data: {}
+    service: script.turn_on_kitchen_lights
+  mode: single
+- id: '1597178064425'
+  alias: Kitchen Lights Off
+  description: ''
+  trigger:
+  - device_id: 35a658320aa44eaca0ed3517731cfa44
+    domain: light
+    entity_id: light.sw_11_level
+    platform: device
+    type: turned_off
+  - device_id: beb47bc78aea4a1e93e84f0747e65bcf
+    domain: light
+    entity_id: light.sw_12_level
+    platform: device
+    type: turned_off
+  condition: []
+  action:
+  - data: {}
+    service: script.turn_off_kitchen_lights
+  mode: single

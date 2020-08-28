@@ -1,0 +1,33 @@
+turn_on_office_lights:
+  alias: Office Lights On
+  sequence:
+  - data_template:
+      brightness: "{{ brightness }}"
+      entity_id: "light.office_lights"
+      transition: "0"
+    service: light.turn_on
+  mode: single
+turn_off_office_lights:
+  alias: Office Lights Off
+  sequence:
+    service: light.turn_off
+    data:
+      entity_id: light.office_lights
+      transition: 0
+
+turn_on_kitchen_lights:
+  alias: Kitchen Lights On
+  sequence:
+  - data:
+      brightness: 255
+      entity_id: light.kitchen_lights
+      transition: 0
+    service: light.turn_on
+  mode: single
+turn_off_kitchen_lights:
+  alias: Kitchen Lights Off
+  sequence:
+    service: light.turn_off
+    data:
+      entity_id: light.kitchen_lights
+      transition: 0
