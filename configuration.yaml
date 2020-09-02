@@ -42,14 +42,6 @@ light:
     entities:
       - light.sw_1_level
       - light.sw_2_level
-  - platform: template
-    lights:
-      office_lights_template:
-        friendly_name: "Office Lights Template"
-        turn_on:
-          service: script.turn_on_office_lights
-        turn_off:
-          service: script.turn_off_office_lights
   - platform: group
     name: Kitchen Lights
     entities:

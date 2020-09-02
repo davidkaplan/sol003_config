@@ -2,48 +2,40 @@
   alias: Office On Automation
   description: ''
   trigger:
-  - device_id: beb9b468154c4396b28e6263a9c29d5d
-    domain: light
-    entity_id: light.sw_1_level
-    platform: device
-    type: turned_on
-  - device_id: 2ecd50f291d945bfb07188db003348f3
-    domain: light
-    entity_id: light.sw_2_level
-    platform: device
-    type: turned_on
-  - device_id: 0d3281fa10024e37977b028b44d3b631
-    domain: binary_sensor
-    entity_id: binary_sensor.zwa005_trisensor_sensor
-    platform: device
-    type: turned_on
-  condition: []
+  - platform: state
+    entity_id:
+    - light.sw_1_level
+    - light.sw_2_level
+  condition:
+  - condition: template
+    value_template: "{{ trigger.to_state.state != 'off' }}"
   action:
-  - data_template:
-      brightness: '{{ trigger.to_state.attributes.brightness }}'
-    service: script.turn_on_office_lights
-  - delay:
-      seconds: 1
+  - service: light.turn_on
+    entity_id: light.office_lights
+    data_template:
+      brightness: "{{ trigger.to_state.attributes.brightness }}"
+  - wait_template: "{{ is_state_attr('light.office_lights', 'brightness', trigger.to_state.attributes.brightness)}}"
+    timeout: '00:00:05'
+  - delay: '00:00:01'
   mode: single
 - id: '1597137681107'
   alias: Office Off Automation
   description: ''
   trigger:
-  - entity_id: light.sw_1_level
-    platform: state
+  - platform: state
+    entity_id:
+    - light.sw_1_level
+    - light.sw_2_level
     to: 'off'
-  - entity_id: light.sw_2_level
-    platform: state
-    to: 'off'
-  - device_id: 0d3281fa10024e37977b028b44d3b631
-    domain: binary_sensor
-    entity_id: binary_sensor.zwa005_trisensor_sensor
-    platform: device
-    type: turned_off
-  condition: []
+  condition:
+  - condition: state
+    entity_id: light.office_lights
+    state: 'on'
   action:
-  - data: {}
-    service: script.turn_off_office_lights
+  - service: light.turn_off
+    entity_id: light.office_lights
+  - wait_template: "{{ is_state('light.office_lights', 'off')}}"
+    timeout: '00:00:05'
   mode: single
 - id: '1597177364212'
   alias: SW10 Turn On
