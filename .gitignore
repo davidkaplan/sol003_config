@@ -1,7 +1,6 @@
 .HA_VERSION
 .storage/
 OZW_Log.txt
-appdaemon/
 hassio_tools/
 home-assistant.log
 home-assistant_v2.db
