@@ -35,26 +35,7 @@ tts:
 automation: !include automations.yaml
 script: !include scripts.yaml
 scene: !include scenes.yaml
-
-light:
-  - platform: group
-    name: Office Lights
-    entities:
-      - light.sw_1_level
-      - light.sw_2_level
-  - platform: group
-    name: Kitchen Lights
-    entities:
-      - light.sw_11_level
-      - light.sw_12_level
-  - platform: template
-    lights:
-      kitchen_lights_template:
-        friendly_name: "Kitchen Lights Template"
-        turn_on:
-          service: script.turn_on_kitchen_lights
-        turn_off:
-          service: script.turn_off_kitchen_lights
+light: !include lights.yaml
 
 # automation:
 #   - alias: Zone1 On
