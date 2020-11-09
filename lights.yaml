@@ -1,4 +1,3 @@
-light:
 - platform: group
   name: Office Lights
   entities:
