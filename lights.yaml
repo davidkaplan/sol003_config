@@ -8,6 +8,11 @@
   entities:
     - light.sw_11_level
     - light.sw_12_level
+#- platform: group
+#  name: Test Light Group
+#  entities:
+#    - light.test_1_dimmer_level
+#    - light.test_2_dimmer_level
 - platform: template
   lights:
     kitchen_lights_template:

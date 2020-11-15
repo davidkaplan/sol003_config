@@ -1,0 +1,10 @@
+test_group_group:
+  name: Test Group Group
+  entities:
+    - light.test_1_dimmer_level
+    - light.test_2_dimmer_level
+test_group_2:
+  name: Another Group
+  entities:
+    - light.dimmer_sw_02_reception_1
+    - light.dimmer_sw05_office1conf

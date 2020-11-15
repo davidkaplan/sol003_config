@@ -8,15 +8,15 @@
     - light.sw_2_level
   condition:
   - condition: template
-    value_template: "{{ trigger.to_state.state != 'off' }}"
+    value_template: '{{ trigger.to_state.state != ''off'' }}'
   action:
   - service: light.turn_on
     entity_id: light.office_lights
     data_template:
-      brightness: "{{ trigger.to_state.attributes.brightness }}"
-  - wait_template: "{{ is_state_attr('light.office_lights', 'brightness', trigger.to_state.attributes.brightness)}}"
-    timeout: '00:00:05'
-  - delay: '00:00:01'
+      brightness: '{{ trigger.to_state.attributes.brightness }}'
+  - wait_template: '{{ is_state_attr(''light.office_lights'', ''brightness'', trigger.to_state.attributes.brightness)}}'
+    timeout: 00:00:05
+  - delay: 00:00:01
   mode: single
 - id: '1597137681107'
   alias: Office Off Automation
@@ -34,8 +34,8 @@
   action:
   - service: light.turn_off
     entity_id: light.office_lights
-  - wait_template: "{{ is_state('light.office_lights', 'off')}}"
-    timeout: '00:00:05'
+  - wait_template: '{{ is_state(''light.office_lights'', ''off'')}}'
+    timeout: 00:00:05
   mode: single
 - id: '1597177364212'
   alias: SW10 Turn On
@@ -77,42 +77,50 @@
     entity_id: switch.multilevel_power_switch_switch
     type: turn_off
   mode: single
-- id: '1597178026933'
-  alias: Kitchen Lights On
+- alias: Test Lights On
+  trigger:
+  - platform: state
+    entity_id:
+    - light.test01_dimmer_level
+    - light.test02_dimmer_level
+  condition:
+  - condition: template
+    value_template: '{{ trigger.to_state.state != ''off'' }}'
+  action:
+  - service: light.turn_on
+    entity_id: light.test_light_group
+    data_template:
+      brightness: '{{ trigger.to_state.attributes.brightness }}'
+  id: b99a07a8ce9e40bd86f8b15286d2a679
+- alias: Test Lights Off
+  trigger:
+  - platform: state
+    entity_id:
+    - light.test01_dimmer_level
+    - light.test02_dimmer_level
+    to: 'off'
+  condition:
+  - condition: state
+    entity_id: light.test_light_group
+    state: 'on'
+  action:
+  - service: light.turn_off
+    entity_id: light.office_lights
+  id: 7392cee5cfb64c57a87cf73ccf32bff5
+- id: '1604911784468'
+  alias: tst
   description: ''
   trigger:
-  - device_id: 35a658320aa44eaca0ed3517731cfa44
-    domain: light
-    entity_id: light.sw_11_level
-    platform: device
-    type: turned_on
-  - device_id: beb47bc78aea4a1e93e84f0747e65bcf
-    domain: light
-    entity_id: light.sw_12_level
-    platform: device
-    type: turned_on
-  condition: []
+  - platform: state
+    entity_id:
+    - light.test01_dimmer_level
+    - light.test02_dimmer_level
+  condition:
+  - condition: template
+    value_template: '{{ trigger.to_state.state != ''off'' }}'
   action:
-  - delay: 00:00:02
-  - data: {}
-    service: script.turn_on_kitchen_lights
-  mode: single
-- id: '1597178064425'
-  alias: Kitchen Lights Off
-  description: ''
-  trigger:
-  - device_id: 35a658320aa44eaca0ed3517731cfa44
-    domain: light
-    entity_id: light.sw_11_level
-    platform: device
-    type: turned_off
-  - device_id: beb47bc78aea4a1e93e84f0747e65bcf
-    domain: light
-    entity_id: light.sw_12_level
-    platform: device
-    type: turned_off
-  condition: []
-  action:
-  - data: {}
-    service: script.turn_off_kitchen_lights
+  - service: light.turn_on
+    data_template:
+      brightness: '{{ trigger.to_state.attributes.brightness }}'
+    entity_id: light.test_light_group
   mode: single
