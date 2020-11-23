@@ -3,7 +3,7 @@
 OZW_Log.txt
 hassio_tools/
 home-assistant.log
-home-assistant_v2.db
+home-assistant_v2.db*
 node-red/
 options.xml
 pyozw.sqlite
