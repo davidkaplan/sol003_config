@@ -10,19 +10,39 @@ import datetime
 
 # tie switches 07 15 16 together
 
-_TIMEOUT = 5
+_TIMEOUT = 3
 
-class LightEntity:
-    def __init__(self, id, hassObj, parent=None):
+class HassInterface:
+    def __init__(self):
+        self.turn_on = None
+        self.turn_off = None
+        self.log = None
+
+class LightEntity():
+    def __init__(self, id, interface, parent=None):
         self.id = id
-        self.hassObj = hassObj
         self.parent = parent
-        self.brightness = (self.hassObj).get_state(entity_id=id, attribute='brightness')
-        #self._locked = False
-        self.time = datetime.datetime.now()
+        self.brightness = 0
+        
+        self.interface = interface
+        self._turn_on = interface.turn_on
+        self._turn_off = interface.turn_off
+        self._log = interface.log
 
-    def isSynced(self):
-        return (self.brightness == self.get_state(entity_id=self.id, attribute='brightness'))
+        #self.updateBrightness()
+        #self.target_brightness = self.brightness
+        #self._blocked = False
+        self.time = datetime.datetime.now()
+        self.log('test contructor')
+
+    def initialize(self):
+        self.log('test test')
+
+    # def updateBrightness(self):
+    #     self.brightness = (self.hassObj).get_state(entity_id=id, attribute='brightness')
+
+    # def isSynced(self):
+    #     return (self.brightness == self.get_state(entity_id=self.id, attribute='brightness'))
 
     def setCurrentTime(self):
         self.time = datetime.datetime.now()
@@ -35,14 +55,46 @@ class LightEntity:
         else:
             return False
 
+    # def isBlocked(self):
+    #     return self._blocked
+
+    # def setBlocked(self):
+    #     self._blocked = True
+
+    # def setUnblock(self):
+    #     self._blocked = False
+
+    def isBlocked(self):
+        if self.isTimedOut():
+            return False
+        return True
+
     def turnOn(self, brightness):
-        if brightness is None:
-            self.turn_on(self.id)
-        else:
-            self.turn_on(self.id, brightness=brightness)
+        # if ( brightness is None ) or ( brightness == 0 ):
+        #     #self.turn_on(self.id)
+        #     self.hassObj.log('log this ' + self.id)
+        #     self.hassObj.turn_off(self.id)
+            
+        # else:
+        #self.turn_on(self.id, brightness=brightness)
+        self._turn_on(self.id, brightness=brightness)
 
     def turnOff(self):
-        self.turn_off(self.id)
+        self._turn_off(self.id)
+        #self.turn_off(self.id)
+
+    def handle(self, command, brightness):
+        if self.isBlocked():
+            return
+
+        self.setCurrentTime()
+        self.parent.handle(command, brightness)
+
+        if command == 'on':
+            self.parent.turnOn(brightness)
+
+        if command == 'off':
+            self.parent.turnOff()
 
     # def isLocked(self):
     #     return self._locked
@@ -52,20 +104,23 @@ class LightEntity:
         
     # def unlock(self):
     #     self._locked = False
+    
+    def log(self, str):
+        self._log(str)
 
     def __str__(self):
         return self.id
 
 class LightGroup(LightEntity):
-    def __init__(self, id, hassObj):
-        super().__init__(id, hassObj)
+    def __init__(self, id, interface):
+        super().__init__(id, interface)
         #self.id = id
         #self._locked = False
         #self.brightness = 255
         self.entities = []
 
     def addEntity(self, id):
-        entity = LightEntity(id, self.hassObj)
+        entity = LightEntity(id, self.interface, parent=self)
         self.entities.append(entity)
         
     def isSynced(self):
@@ -91,6 +146,16 @@ class LightGroup(LightEntity):
     #     super().unlock()
     #     for entity in self.entities:
     #         entity.unlock()
+
+    def handle(self, command, brightness):
+        for entity in self.entities:
+            entity.setCurrentTime()
+
+        if command == 'on':
+            pass
+
+        if command == 'off':
+            pass
 
     def __len__(self):
         return len(self.entities)
@@ -122,6 +187,12 @@ class LightGroups:
                 return group
         return None
 
+    def getGroup(self, id):
+        for group in self.lightGroups:
+            if group.id == id:
+                return group
+        return None
+
     def getEntity(self, id):
         for group in self.lightGroups:
             for entity in group:
@@ -144,8 +215,11 @@ class HelloWorld(hass.Hass):
         self.listen_event(self.handleCallService, "call_service")
         self.raw_groups = self.get_state("group")
         self.lightGroups = LightGroups()
-
-
+        
+        self.hassFuncs = HassInterface()
+        self.hassFuncs.turn_on = hass.Hass.turn_on
+        self.hassFuncs.turn_off = hass.Hass.turn_off
+        self.hassFuncs.log = hass.Hass.log
 
         #self.groups = {}
         #self.all_entities = []
@@ -198,29 +272,31 @@ class HelloWorld(hass.Hass):
         except KeyError:
             target_brightness = 0
 
-        # Make sure it's been a few seconds since entity's last state change
         entity = self.lightGroups.getEntity(id)
-        if not entity.isTimedOut():
+        if entity is None:
+            self.log("error got null entity")
             return
+        entity.handle(state, target_brightness)
 
-        group = self.lightGroups.getGroupByEntity(id)
-        id = group.id
+        # Make sure it's been a few seconds since entity's last state change        
+        # if not entity.isTimedOut():
+        #     return
 
-        self.log('light parent is: ' + id)
+        # group = self.lightGroups.getGroupByEntity(id)
+        # id = group.id
 
-        # 
-        if target_brigtness == group.brightness:
-            return
+        # self.log('light parent is: ' + id)
 
-        if not group.isTimedOut():
-            return
+        # if target_brigtness == group.brightness:
+        #     return
 
+        # if not group.isTimedOut():
+        #     return
 
-
-        if state == 'off':
-            self.turnOff(id)
-        elif state == 'on':
-            self.turnOn(id, target_brightness)
+        # if state == 'off':
+        #     self.turnOff(id)
+        # elif state == 'on':
+        #     self.turnOn(id, target_brightness)
 
         # get parent light group of entity
         # service call set brightness on light group
@@ -249,20 +325,29 @@ class HelloWorld(hass.Hass):
         id = data['service_data']['entity_id']
         if id not in self.lightGroups.getAllEntities():
             return
+        self.log(event_name)
+        self.log(data)
+        self.log(kwargs)
         self.log("call_service event on: " + id)
-        service = data['service'] # 'turn_on' or 'turn_off'
+        service = data['service'].lstrip('turn_') # 'turn_on' or 'turn_off'
         brightness = 0
-        if service == 'turn_off':
-            self.turnOff(id)
-        if service == 'turn_on':
-            brightness = data['service_data']['brightness_pct']
-            self.turnOn(id, brightness)
+        group = self.lightGroups.getGroup(id)
+        if group is None:
+            self.log("error got null group")
+            #raise
+            return
+        group.handle(service, brightness)
+        # if service == 'turn_off':
+        #     self.turnOff(id)
+        # if service == 'turn_on':
+        #     brightness = data['service_data']['brightness_pct']
+        #     self.turnOn(id, brightness)
 
         #self.log(data)
         #self.log(kwargs)
 
-    def turnOff(self, id):
-        pass
+    # def turnOff(self, id):
+    #     pass
 
-    def turnOn(self, id):
-        pass
+    # def turnOn(self, id):
+    #     pass
