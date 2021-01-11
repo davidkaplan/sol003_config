@@ -1,5 +1,7 @@
 .HA_VERSION
 .storage/
+.cloud/
+blueprints/
 OZW_Log.txt
 hassio_tools/
 home-assistant.log
