@@ -37,6 +37,21 @@ script: !include scripts.yaml
 scene: !include scenes.yaml
 light: !include lights.yaml
 
+# for testing
+switch:
+  - platform: template
+    switches:
+      test_switch:
+        friendly_name: "Test Switch Office"
+        turn_on:
+          #service: switch.turn_on
+          #data:
+          #  entity_id: switch.skylight_open
+        turn_off:
+          #service: switch.turn_off
+          #data:
+          #  entity_id: switch.skylight_close
+
 # automation:
 #   - alias: Zone1 On
 #     trigger:

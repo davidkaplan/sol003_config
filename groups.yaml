@@ -8,3 +8,9 @@ test_group_2:
   entities:
     - light.dimmer_sw_02_reception_1
     - light.dimmer_sw05_office1conf
+test_group_office_alg:
+  name: Test Group Open Office
+  entities:
+    - light.office_virtual_light
+    - light.test_17
+    - light.test_18
