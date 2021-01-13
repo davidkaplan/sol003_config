@@ -22,6 +22,17 @@ sensor:
     state_topic: "OpenZWave/1/node/2/instance/1/commandclass/114/value/1125899954847767/"
     value_template: '{{ value_json.Value }}'
     unique_id: ZWaveNode_2
+    
+  - platform: time_date
+    display_options:
+      - 'time'
+      - 'date'
+      - 'date_time'
+      - 'date_time_utc'
+      - 'date_time_iso'
+      - 'time_date'
+      - 'time_utc'
+      - 'beat'
 
           
 # Configure a default setup of Home Assistant (frontend, api, etc)
