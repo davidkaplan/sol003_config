@@ -504,10 +504,10 @@
   description: when motion is detected, set SW8 to 100%, wait 10 minutes check again.  if
     no motion set SW8 to 20%, wait 10 minutes check again, if no motion turn off SW8
   trigger:
-  - type: motion
+  - type: turned_on
     platform: device
     device_id: 748d3a8cb28a4eb6bdc862245d81e78b
-    entity_id: binary_sensor.ms12_homesec_menbr
+    entity_id: binary_sensor.ms12_motion_menbr
     domain: binary_sensor
   condition: []
   action:
