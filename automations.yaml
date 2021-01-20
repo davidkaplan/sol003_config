@@ -493,17 +493,11 @@
         entity_id: binary_sensor.ms11_motion_womenbr
         domain: binary_sensor
       sequence:
-      - type: turn_on
+      - type: turn_off
         device_id: d709fea1113e447d96478c10b195a79e
         entity_id: light.dimmer_sw09_womensbr
         domain: light
-        brightness_pct: 20
     default: []
-  - delay: 00:10:00
-  - type: turn_off
-    device_id: d709fea1113e447d96478c10b195a79e
-    entity_id: light.dimmer_sw09_womensbr
-    domain: light
   mode: restart
 - id: '1610157048182'
   alias: Bathroom, Men's
@@ -543,17 +537,11 @@
         entity_id: binary_sensor.ms12_motion_menbr
         domain: binary_sensor
       sequence:
-      - type: turn_on
+      - type: turn_off
         device_id: 0cba7bfe823945f2a15f946e92e29500
         entity_id: light.dimmer_sw08_mensbr
         domain: light
-        brightness_pct: 20
     default: []
-  - delay: 00:10:00
-  - type: turn_off
-    device_id: 0cba7bfe823945f2a15f946e92e29500
-    entity_id: light.dimmer_sw08_mensbr
-    domain: light
   mode: restart
 - id: '1610157696796'
   alias: Mini Conf 1 Daytime
@@ -1236,4 +1224,14 @@
   - service: light.turn_off
     data: {}
     entity_id: light.office_virtual_light
+  mode: single
+- id: '1610765351173'
+  alias: Night Time Daily Scene
+  description: ''
+  trigger:
+  - platform: time
+    at: input_datetime.end_of_day
+  condition: []
+  action:
+  - scene: scene.night
   mode: single
