@@ -1,22 +1,84 @@
-- id: '1595455541321'
-  name: Office Daytime
+- id: '1610765202045'
+  name: Night
   entities:
-    light.lzw31_dimmer_level:
-      friendly_name: 'SW05: Level'
+    light.sw_1_reception:
+      node_id: 9
+      friendly_name: SW01 Reception
+      supported_features: 33
+      state: 'off'
+    light.dimmer_sw_02_reception_1:
+      node_id: 10
+      friendly_name: SW02 Reception 1
+      supported_features: 33
+      state: 'off'
+    switch.light_sw03_emergency_exit_1:
+      node_id: 18
+      friendly_name: SW03 Emergency Exit
+      state: 'off'
+    light.dimmer_sw04_reception_2:
+      node_id: 19
+      friendly_name: SW04 Reception 2
+      supported_features: 33
+      state: 'off'
+    light.dimmer_sw05_office1conf:
       node_id: 20
-      state: 'off'
+      friendly_name: SW05 Office 1 Conf Room
       supported_features: 33
-    light.lzw31_dimmer_level_2:
-      brightness: 111
-      friendly_name: 'SW06: Level'
+      state: 'off'
+    light.dimmer_sw_06_diningroom_overhead:
       node_id: 21
-      state: 'on'
+      friendly_name: SW06 Dining Room Overhead
       supported_features: 33
-    light.lzw31_dimmer_level_3:
-      friendly_name: 'SW07: Level'
-      node_id: 22
       state: 'off'
+    light.dimmer_sw_07_open_office:
+      node_id: 22
+      friendly_name: SW07 Open Office
       supported_features: 33
-- id: '1598474151717'
-  name: Office Nighttime
-  entities: {}
+      state: 'off'
+    light.dimmer_sw08_mensbr:
+      node_id: 23
+      friendly_name: SW08 Men's Bathroom
+      supported_features: 33
+      state: 'off'
+    light.dimmer_sw09_womensbr:
+      node_id: 24
+      friendly_name: SW09 Women's Bathroom
+      supported_features: 33
+      state: 'off'
+    light.dimmer_sw10_miniconf_1:
+      node_id: 25
+      friendly_name: SW10 Mini Conference 1
+      supported_features: 33
+      state: 'off'
+    light.dimmer_sw11_miniconf_2:
+      node_id: 13
+      friendly_name: SW11 Mini Conference 2
+      supported_features: 33
+      state: 'off'
+    light.dimmer_sw12_office_2:
+      node_id: 17
+      friendly_name: SW12 Office 2
+      supported_features: 33
+      state: 'off'
+    light.dimmer_sw13_storage_room:
+      node_id: 26
+      friendly_name: SW13 Storage Room
+      supported_features: 33
+      state: 'off'
+    switch.lzw30_switch_switch_2:
+      node_id: 27
+      friendly_name: 'SW14: Switch'
+      state: 'off'
+    light.dimmer_sw_15_open_office:
+      node_id: 46
+      friendly_name: SW15 Open Office
+      supported_features: 1
+      state: 'off'
+    switch.switch_sw_16_open_office:
+      node_id: 48
+      friendly_name: 'SW16: Switch'
+      state: 'off'
+    switch.lzw30_switch_switch_3:
+      node_id: 30
+      friendly_name: 'SW17: Switch'
+      state: 'off'

@@ -6,7 +6,7 @@
   - type: turned_on
     platform: device
     device_id: 0d3281fa10024e37977b028b44d3b631
-    entity_id: binary_sensor.ms01_trisensor_motion_kitchen
+    entity_id: binary_sensor.ms01_motion_kitchen
     domain: binary_sensor
   condition:
   - condition: time
@@ -18,11 +18,10 @@
     entity_id: light.dimmer_sw_06_diningroom_overhead
     domain: light
     brightness_pct: 100
-  - type: turn_on
-    device_id: 297b1b6240b54d768fa7fae65efbdfa4
-    entity_id: light.zmnhvdx_flush_dimmer_0_10v_level
-    domain: light
-    brightness_pct: 75
+  - service: light.turn_on
+    data:
+      brightness: 255
+    entity_id: light.dining_virtual_light
   - delay: 00:30:00
   - choose:
     - conditions:
@@ -40,11 +39,6 @@
         entity_id: light.dimmer_sw_06_diningroom_overhead
         domain: light
         brightness_pct: 100
-      - type: turn_on
-        device_id: 297b1b6240b54d768fa7fae65efbdfa4
-        entity_id: light.zmnhvdx_flush_dimmer_0_10v_level
-        domain: light
-        brightness_pct: 100
     - conditions:
       - type: is_off
         condition: device
@@ -55,10 +49,6 @@
       - type: turn_off
         device_id: 17c07adcead245e89b654542c0ab131b
         entity_id: light.dimmer_sw_06_diningroom_overhead
-        domain: light
-      - type: turn_off
-        device_id: 297b1b6240b54d768fa7fae65efbdfa4
-        entity_id: light.zmnhvdx_flush_dimmer_0_10v_level
         domain: light
     default: []
   mode: restart
@@ -210,11 +200,6 @@
     before: input_datetime.start_of_evening
   action:
   - type: turn_on
-    device_id: beb9b468154c4396b28e6263a9c29d5d
-    entity_id: light.sw_1_reception
-    domain: light
-    brightness_pct: 65
-  - type: turn_on
     device_id: 2ecd50f291d945bfb07188db003348f3
     entity_id: light.dimmer_sw_02_reception_1
     domain: light
@@ -237,11 +222,6 @@
         before: input_datetime.start_of_evening
       sequence:
       - type: turn_on
-        device_id: beb9b468154c4396b28e6263a9c29d5d
-        entity_id: light.sw_1_reception
-        domain: light
-        brightness_pct: 65
-      - type: turn_on
         device_id: 2ecd50f291d945bfb07188db003348f3
         entity_id: light.dimmer_sw_02_reception_1
         domain: light
@@ -258,10 +238,6 @@
         entity_id: binary_sensor.ms02_motion_reception
         domain: binary_sensor
       sequence:
-      - type: turn_off
-        device_id: beb9b468154c4396b28e6263a9c29d5d
-        entity_id: light.sw_1_reception
-        domain: light
       - type: turn_off
         device_id: 2ecd50f291d945bfb07188db003348f3
         entity_id: light.dimmer_sw_02_reception_1
@@ -288,11 +264,6 @@
     before: input_datetime.end_of_day
   action:
   - type: turn_on
-    device_id: beb9b468154c4396b28e6263a9c29d5d
-    entity_id: light.sw_1_reception
-    domain: light
-    brightness_pct: 100
-  - type: turn_on
     device_id: 2ecd50f291d945bfb07188db003348f3
     entity_id: light.dimmer_sw_02_reception_1
     domain: light
@@ -315,11 +286,6 @@
         before: input_datetime.end_of_day
       sequence:
       - type: turn_on
-        device_id: beb9b468154c4396b28e6263a9c29d5d
-        entity_id: light.sw_1_reception
-        domain: light
-        brightness_pct: 100
-      - type: turn_on
         device_id: 2ecd50f291d945bfb07188db003348f3
         entity_id: light.dimmer_sw_02_reception_1
         domain: light
@@ -336,10 +302,6 @@
         entity_id: binary_sensor.ms02_motion_reception
         domain: binary_sensor
       sequence:
-      - type: turn_off
-        device_id: beb9b468154c4396b28e6263a9c29d5d
-        entity_id: light.sw_1_reception
-        domain: light
       - type: turn_off
         device_id: 2ecd50f291d945bfb07188db003348f3
         entity_id: light.dimmer_sw_02_reception_1
@@ -366,11 +328,6 @@
     before: input_datetime.time_1
   action:
   - type: turn_on
-    device_id: beb9b468154c4396b28e6263a9c29d5d
-    entity_id: light.sw_1_reception
-    domain: light
-    brightness_pct: 50
-  - type: turn_on
     device_id: 2ecd50f291d945bfb07188db003348f3
     entity_id: light.dimmer_sw_02_reception_1
     domain: light
@@ -393,11 +350,6 @@
         before: input_datetime.time_1
       sequence:
       - type: turn_on
-        device_id: beb9b468154c4396b28e6263a9c29d5d
-        entity_id: light.sw_1_reception
-        domain: light
-        brightness_pct: 50
-      - type: turn_on
         device_id: 2ecd50f291d945bfb07188db003348f3
         entity_id: light.dimmer_sw_02_reception_1
         domain: light
@@ -414,11 +366,6 @@
         entity_id: binary_sensor.ms02_motion_reception
         domain: binary_sensor
       sequence:
-      - type: turn_on
-        device_id: beb9b468154c4396b28e6263a9c29d5d
-        entity_id: light.sw_1_reception
-        domain: light
-        brightness_pct: 10
       - type: turn_on
         device_id: 2ecd50f291d945bfb07188db003348f3
         entity_id: light.dimmer_sw_02_reception_1
@@ -439,11 +386,6 @@
     at: input_datetime.end_of_day
   condition: []
   action:
-  - type: turn_on
-    device_id: beb9b468154c4396b28e6263a9c29d5d
-    entity_id: light.sw_1_reception
-    domain: light
-    brightness_pct: 10
   - type: turn_on
     device_id: 2ecd50f291d945bfb07188db003348f3
     entity_id: light.dimmer_sw_02_reception_1
@@ -1234,4 +1176,34 @@
   condition: []
   action:
   - scene: scene.night
+  mode: single
+- id: '1611182442012'
+  alias: Switch 1 Feedback Turn On
+  description: ''
+  trigger:
+  - platform: device
+    type: turned_on
+    device_id: beb9b468154c4396b28e6263a9c29d5d
+    entity_id: light.sw_1_reception
+    domain: light
+  condition: []
+  action:
+  - service: light.turn_on
+    data: {}
+    entity_id: light.dining_virtual_light
+  mode: single
+- id: '1611182490258'
+  alias: Switch 1 Feedback Turn Off
+  description: ''
+  trigger:
+  - platform: device
+    type: turned_off
+    device_id: beb9b468154c4396b28e6263a9c29d5d
+    entity_id: light.sw_1_reception
+    domain: light
+  condition: []
+  action:
+  - service: light.turn_off
+    data: {}
+    entity_id: light.dining_virtual_light
   mode: single

@@ -1,20 +1,9 @@
+# Local MQTT server for OpenZWave
 mqtt:
   broker: localhost
   port: 1883
-  
-#addon_core_zwave:
-#  whitelist_external_dirs:
-#  - /data/ozw/config
 
-#homeassistant:
-#  whitelist_external_dirs:
-#  - /root/config/scripts
-
-#zwave:
-#  usb_path: /dev/serial/by-id/usb-0658_0200-if00
-#  config_path: /config/openzwave/config
-# Example configuration.yaml entry
-
+cloud:
 
 sensor:
   - platform: mqtt
@@ -63,28 +52,3 @@ switch:
           #data:
           #  entity_id: switch.skylight_close
 
-# automation:
-#   - alias: Zone1 On
-#     trigger:
-#     - platform: state
-#       entity_id:
-#         - light.sw_1_level
-#         - light.sw_2_level
-#       to: 'on'
-#     action:   
-#     - service: light.turn_on
-#       data:
-#         entity_id: light.office_lights_template
-#         transition: 0
-#   - alias: Zone1 Off
-#     trigger:
-#     - platform: state
-#       entity_id:
-#         - light.sw_1_level
-#         - light.sw_2_level
-#       to: 'off'
-#     action:   
-#     - service: light.turn_off
-#       data:
-#         entity_id: light.office_lights_template
-#         transition: 0
