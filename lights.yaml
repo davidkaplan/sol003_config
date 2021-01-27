@@ -55,45 +55,45 @@
 
 - platform: template
   lights:
-    kitchen_virtual_light:
-      friendly_name: "Kitchen Virtual Light"
+    dining_virtual_light:
+      friendly_name: "Dining Room Linear"
       turn_on:
         service: light.turn_on
         data:
-          entity_id: light.test_3
+          entity_id: light.sw_1_reception
           brightness: 255
       turn_off:
         service: light.turn_off
         data:
-          entity_id: light.test_3
+          entity_id: light.sw_1_reception
       set_level:
         - service: light.turn_on
           data:
-            entity_id: light.test_3
+            entity_id: light.sw_1_reception
             brightness: 255
         - service: light.turn_on
           data:
-            entity_id: light.test_4
+            entity_id: light.zmnhvdx_flush_dimmer_0_10v_level
             brightness: "{{ brightness }}"
 
 - platform: template
   lights:
     office_virtual_light:
-      friendly_name: "Open Office Virtual Light"
+      friendly_name: "Open Office Linear"
       turn_on:
         service: switch.turn_on
         data:
-          entity_id: switch.test_switch
+          entity_id: switch.switch_sw_16_open_office
       turn_off:
         service: switch.turn_off
         data:
-          entity_id: switch.test_switch
+          entity_id: switch.switch_sw_16_open_office
       set_level:
         - service: switch.turn_on
           data:
-            entity_id: switch.test_switch
+            entity_id: switch.switch_sw_16_open_office
         - service: light.turn_on
           data:
-            entity_id: light.test_5
+            entity_id: light.zmnhvdx_flush_dimmer_0_10v_level_2
             brightness: "{{ brightness }}"
         
