@@ -1,3 +1,10 @@
+open_office_light_group:
+  name: Open Office Light Group
+  entities:
+    - light.office_virtual_light
+    - light.dimmer_sw_15_open_office
+    - light.dimmer_sw_07_open_office
+
 # test_group_group:
 #   name: Test Group Group
 #   entities:
