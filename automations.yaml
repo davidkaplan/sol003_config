@@ -1,12 +1,13 @@
 - id: '1608261513093'
   alias: Kitchen Daytime
   description: Between start of day and start of evening, when motion is detected,
-    SW1 @ 100 & 0-10v.1 @ 75.  Wait 30 minutes, check MS1.
+    SW1 @ 100 & Diningroom Linears @ 100.  Wait 30 minutes, check MS1.  If no motion
+    dim to 25%
   trigger:
   - type: turned_on
     platform: device
     device_id: 0d3281fa10024e37977b028b44d3b631
-    entity_id: binary_sensor.ms01_trisensor_motion_kitchen
+    entity_id: binary_sensor.ms01_motion_kitchen
     domain: binary_sensor
   condition:
   - condition: time
@@ -18,18 +19,17 @@
     entity_id: light.dimmer_sw_06_diningroom_overhead
     domain: light
     brightness_pct: 100
-  - type: turn_on
-    device_id: 297b1b6240b54d768fa7fae65efbdfa4
-    entity_id: light.zmnhvdx_flush_dimmer_0_10v_level
-    domain: light
-    brightness_pct: 75
+  - service: light.turn_on
+    data:
+      brightness: 255
+    entity_id: light.dining_virtual_light
   - delay: 00:30:00
   - choose:
     - conditions:
       - type: is_on
         condition: device
         device_id: 0d3281fa10024e37977b028b44d3b631
-        entity_id: binary_sensor.ms01_trisensor_motion_kitchen
+        entity_id: binary_sensor.ms01_motion_kitchen
         domain: binary_sensor
       - condition: time
         after: input_datetime.time_1
@@ -40,37 +40,38 @@
         entity_id: light.dimmer_sw_06_diningroom_overhead
         domain: light
         brightness_pct: 100
-      - type: turn_on
-        device_id: 297b1b6240b54d768fa7fae65efbdfa4
-        entity_id: light.zmnhvdx_flush_dimmer_0_10v_level
-        domain: light
-        brightness_pct: 100
+      - service: light.turn_on
+        data:
+          brightness: 255
+        entity_id: light.dining_virtual_light
     - conditions:
       - type: is_off
         condition: device
         device_id: 0d3281fa10024e37977b028b44d3b631
-        entity_id: binary_sensor.ms01_trisensor_motion_kitchen
+        entity_id: binary_sensor.ms01_motion_kitchen
         domain: binary_sensor
       sequence:
-      - type: turn_off
+      - type: turn_on
         device_id: 17c07adcead245e89b654542c0ab131b
         entity_id: light.dimmer_sw_06_diningroom_overhead
         domain: light
-      - type: turn_off
-        device_id: 297b1b6240b54d768fa7fae65efbdfa4
-        entity_id: light.zmnhvdx_flush_dimmer_0_10v_level
-        domain: light
+        brightness_pct: 25
+      - service: light.turn_on
+        data:
+          brightness: 60
+        entity_id: light.dining_virtual_light
     default: []
   mode: restart
 - id: '1610139542977'
   alias: Kitchen Evening
   description: Between start of evening and end of day, when motion is detected, SW1
-    @100 & 0-10v.1 @ 100.  Wait 30 minutes, check MS1.
+    @100 & Diningroom Linears @ 100.  Wait 30 minutes, check MS1.  If no motion, turn
+    off lights
   trigger:
   - type: turned_on
     platform: device
     device_id: 0d3281fa10024e37977b028b44d3b631
-    entity_id: binary_sensor.ms01_trisensor_motion_kitchen
+    entity_id: binary_sensor.ms01_motion_kitchen
     domain: binary_sensor
   condition:
   - condition: time
@@ -82,18 +83,17 @@
     entity_id: light.dimmer_sw_06_diningroom_overhead
     domain: light
     brightness_pct: 100
-  - type: turn_on
-    device_id: 297b1b6240b54d768fa7fae65efbdfa4
-    entity_id: light.zmnhvdx_flush_dimmer_0_10v_level
-    domain: light
-    brightness_pct: 100
+  - service: light.turn_on
+    data:
+      brightness: 255
+    entity_id: light.dining_virtual_light
   - delay: 00:30:00
   - choose:
     - conditions:
       - type: is_on
         condition: device
         device_id: 0d3281fa10024e37977b028b44d3b631
-        entity_id: binary_sensor.ms01_trisensor_motion_kitchen
+        entity_id: binary_sensor.ms01_motion_kitchen
         domain: binary_sensor
       - condition: time
         after: input_datetime.start_of_evening
@@ -104,32 +104,29 @@
         entity_id: light.dimmer_sw_06_diningroom_overhead
         domain: light
         brightness_pct: 100
-      - type: turn_on
-        device_id: 297b1b6240b54d768fa7fae65efbdfa4
-        entity_id: light.zmnhvdx_flush_dimmer_0_10v_level
-        domain: light
-        brightness_pct: 100
+      - service: light.turn_on
+        data:
+          brightness: 255
+        entity_id: light.dining_virtual_light
     - conditions:
       - type: is_off
         condition: device
         device_id: 0d3281fa10024e37977b028b44d3b631
-        entity_id: binary_sensor.ms01_trisensor_motion_kitchen
+        entity_id: binary_sensor.ms01_motion_kitchen
         domain: binary_sensor
       sequence:
-      - type: turn_on
+      - type: turn_off
         device_id: 17c07adcead245e89b654542c0ab131b
         entity_id: light.dimmer_sw_06_diningroom_overhead
         domain: light
-        brightness_pct: 100
-      - type: turn_off
-        device_id: 297b1b6240b54d768fa7fae65efbdfa4
-        entity_id: light.zmnhvdx_flush_dimmer_0_10v_level
-        domain: light
+      - service: light.turn_off
+        data: {}
+        entity_id: light.dining_virtual_light
     default: []
   mode: restart
 - id: '1610142928430'
   alias: Kitchen Night, Off
-  description: 'At end of day, turn off kitchen lights '
+  description: At end of day, turn off SW6 and Dining Room Linear
   trigger:
   - platform: time
     at: input_datetime.end_of_day
@@ -139,20 +136,16 @@
     device_id: 17c07adcead245e89b654542c0ab131b
     entity_id: light.dimmer_sw_06_diningroom_overhead
     domain: light
-  - type: turn_off
-    device_id: 297b1b6240b54d768fa7fae65efbdfa4
-    entity_id: light.zmnhvdx_flush_dimmer_0_10v_level
-    domain: light
   mode: single
 - id: '1610144600211'
   alias: Kitchen Night
-  description: Between end of day and morning, when motion is detected, SW6 @ 100.
-    Wait 15 minutes, check MS1
+  description: Between end of day and morning, when motion is detected, SW6 @ 75.
+    Wait 15 minutes, check MS1.  If no motion turn off SW6
   trigger:
   - type: turned_on
     platform: device
     device_id: 0d3281fa10024e37977b028b44d3b631
-    entity_id: binary_sensor.ms01_trisensor_motion_kitchen
+    entity_id: binary_sensor.ms01_motion_kitchen
     domain: binary_sensor
   condition:
   - condition: time
@@ -163,14 +156,14 @@
     device_id: 17c07adcead245e89b654542c0ab131b
     entity_id: light.dimmer_sw_06_diningroom_overhead
     domain: light
-    brightness_pct: 100
+    brightness_pct: 75
   - delay: 00:15:00
   - choose:
     - conditions:
       - type: is_on
         condition: device
         device_id: 0d3281fa10024e37977b028b44d3b631
-        entity_id: binary_sensor.ms01_trisensor_motion_kitchen
+        entity_id: binary_sensor.ms01_motion_kitchen
         domain: binary_sensor
       - condition: time
         after: input_datetime.end_of_day
@@ -180,12 +173,12 @@
         device_id: 17c07adcead245e89b654542c0ab131b
         entity_id: light.dimmer_sw_06_diningroom_overhead
         domain: light
-        brightness_pct: 100
+        brightness_pct: 75
     - conditions:
       - type: is_off
         condition: device
         device_id: 0d3281fa10024e37977b028b44d3b631
-        entity_id: binary_sensor.ms01_trisensor_motion_kitchen
+        entity_id: binary_sensor.ms01_motion_kitchen
         domain: binary_sensor
       sequence:
       - type: turn_off
@@ -196,8 +189,9 @@
   mode: restart
 - id: '1610145794730'
   alias: Reception Daytime
-  description: Between morning and start of evening, when motion is detected, SW1.0,
-    SW2 & SW4 @ 65.  Wait 45 minutes, check MS2
+  description: Between morning and start of evening, when motion is detected, Diningroom
+    Linears, SW2 & SW4 @ 100.  Wait 45 minutes, check MS2.  If no motion Diningroom
+    Linears, SW2 & SW4 @ 15
   trigger:
   - type: turned_on
     platform: device
@@ -209,21 +203,20 @@
     after: input_datetime.time_1
     before: input_datetime.start_of_evening
   action:
-  - type: turn_on
-    device_id: beb9b468154c4396b28e6263a9c29d5d
-    entity_id: light.sw_1_reception
-    domain: light
-    brightness_pct: 65
+  - service: light.turn_on
+    data:
+      brightness: 255
+    entity_id: light.dining_virtual_light
   - type: turn_on
     device_id: 2ecd50f291d945bfb07188db003348f3
     entity_id: light.dimmer_sw_02_reception_1
     domain: light
-    brightness_pct: 65
+    brightness_pct: 100
   - type: turn_on
     device_id: c07f1131739f49b8870493d0f3f87921
     entity_id: light.dimmer_sw04_reception_2
     domain: light
-    brightness_pct: 65
+    brightness_pct: 100
   - delay: '45'
   - choose:
     - conditions:
@@ -236,21 +229,20 @@
         after: input_datetime.time_1
         before: input_datetime.start_of_evening
       sequence:
-      - type: turn_on
-        device_id: beb9b468154c4396b28e6263a9c29d5d
-        entity_id: light.sw_1_reception
-        domain: light
-        brightness_pct: 65
+      - service: light.turn_on
+        data:
+          brightness: 255
+        entity_id: light.dining_virtual_light
       - type: turn_on
         device_id: 2ecd50f291d945bfb07188db003348f3
         entity_id: light.dimmer_sw_02_reception_1
         domain: light
-        brightness_pct: 65
+        brightness_pct: 100
       - type: turn_on
         device_id: c07f1131739f49b8870493d0f3f87921
         entity_id: light.dimmer_sw04_reception_2
         domain: light
-        brightness_pct: 65
+        brightness_pct: 100
     - conditions:
       - type: is_off
         condition: device
@@ -258,24 +250,27 @@
         entity_id: binary_sensor.ms02_motion_reception
         domain: binary_sensor
       sequence:
-      - type: turn_off
-        device_id: beb9b468154c4396b28e6263a9c29d5d
-        entity_id: light.sw_1_reception
-        domain: light
-      - type: turn_off
+      - service: light.turn_on
+        data:
+          brightness: 40
+        entity_id: light.dining_virtual_light
+      - type: turn_on
         device_id: 2ecd50f291d945bfb07188db003348f3
         entity_id: light.dimmer_sw_02_reception_1
         domain: light
-      - type: turn_off
+        brightness_pct: 15
+      - type: turn_on
         device_id: c07f1131739f49b8870493d0f3f87921
         entity_id: light.dimmer_sw04_reception_2
         domain: light
+        brightness_pct: 15
     default: []
   mode: restart
 - id: '1610146825065'
   alias: Reception Evening
-  description: Between start of evening and end of day, when motion is detected, SW1.0,
-    SW2 & SW4 @ 100.  Wait 45 minutes, check MS2
+  description: Between start of evening and end of day, when motion is detected, Dining
+    Room Linears, SW2 & SW4 @ 100.  Wait 45 minutes, check MS2. If no motion turn
+    off Diningroom Linears, SW2, & SW4
   trigger:
   - type: turned_on
     platform: device
@@ -288,11 +283,6 @@
     before: input_datetime.end_of_day
   action:
   - type: turn_on
-    device_id: beb9b468154c4396b28e6263a9c29d5d
-    entity_id: light.sw_1_reception
-    domain: light
-    brightness_pct: 100
-  - type: turn_on
     device_id: 2ecd50f291d945bfb07188db003348f3
     entity_id: light.dimmer_sw_02_reception_1
     domain: light
@@ -302,6 +292,10 @@
     entity_id: light.dimmer_sw04_reception_2
     domain: light
     brightness_pct: 100
+  - service: light.turn_on
+    data:
+      brightness: 255
+    entity_id: light.dining_virtual_light
   - delay: 00:45:00
   - choose:
     - conditions:
@@ -315,11 +309,6 @@
         before: input_datetime.end_of_day
       sequence:
       - type: turn_on
-        device_id: beb9b468154c4396b28e6263a9c29d5d
-        entity_id: light.sw_1_reception
-        domain: light
-        brightness_pct: 100
-      - type: turn_on
         device_id: 2ecd50f291d945bfb07188db003348f3
         entity_id: light.dimmer_sw_02_reception_1
         domain: light
@@ -329,6 +318,10 @@
         entity_id: light.dimmer_sw04_reception_2
         domain: light
         brightness_pct: 100
+      - service: light.turn_on
+        data:
+          brightness: 255
+        entity_id: light.dining_virtual_light
     - conditions:
       - type: is_off
         condition: device
@@ -337,10 +330,6 @@
         domain: binary_sensor
       sequence:
       - type: turn_off
-        device_id: beb9b468154c4396b28e6263a9c29d5d
-        entity_id: light.sw_1_reception
-        domain: light
-      - type: turn_off
         device_id: 2ecd50f291d945bfb07188db003348f3
         entity_id: light.dimmer_sw_02_reception_1
         domain: light
@@ -348,12 +337,16 @@
         device_id: c07f1131739f49b8870493d0f3f87921
         entity_id: light.dimmer_sw04_reception_2
         domain: light
+      - service: light.turn_off
+        data: {}
+        entity_id: light.dining_virtual_light
     default: []
   mode: restart
 - id: '1610156306142'
   alias: Reception Night
-  description: Between end of day and start of day, when motion is detected, SW6 @
-    50. Wait 15 minutes, check MS2
+  description: Between end of day and start of day, when motion is detected, SW2,
+    SW4, & Diningroom Linears @ 50. Wait 15 minutes, check MS2.  If no motion turn
+    off SW2, SW4, & Diningroom linears
   trigger:
   - type: turned_on
     platform: device
@@ -366,11 +359,6 @@
     before: input_datetime.time_1
   action:
   - type: turn_on
-    device_id: beb9b468154c4396b28e6263a9c29d5d
-    entity_id: light.sw_1_reception
-    domain: light
-    brightness_pct: 50
-  - type: turn_on
     device_id: 2ecd50f291d945bfb07188db003348f3
     entity_id: light.dimmer_sw_02_reception_1
     domain: light
@@ -380,6 +368,10 @@
     entity_id: light.dimmer_sw04_reception_2
     domain: light
     brightness_pct: 50
+  - service: light.turn_on
+    data:
+      brightness: 170
+    entity_id: light.dining_virtual_light
   - delay: 00:15:00
   - choose:
     - conditions:
@@ -393,11 +385,6 @@
         before: input_datetime.time_1
       sequence:
       - type: turn_on
-        device_id: beb9b468154c4396b28e6263a9c29d5d
-        entity_id: light.sw_1_reception
-        domain: light
-        brightness_pct: 50
-      - type: turn_on
         device_id: 2ecd50f291d945bfb07188db003348f3
         entity_id: light.dimmer_sw_02_reception_1
         domain: light
@@ -407,6 +394,10 @@
         entity_id: light.dimmer_sw04_reception_2
         domain: light
         brightness_pct: 50
+      - service: light.turn_on
+        data:
+          brightness: 170
+        entity_id: light.dining_virtual_light
     - conditions:
       - type: is_off
         condition: device
@@ -414,51 +405,43 @@
         entity_id: binary_sensor.ms02_motion_reception
         domain: binary_sensor
       sequence:
-      - type: turn_on
-        device_id: beb9b468154c4396b28e6263a9c29d5d
-        entity_id: light.sw_1_reception
-        domain: light
-        brightness_pct: 10
-      - type: turn_on
+      - type: turn_off
         device_id: 2ecd50f291d945bfb07188db003348f3
         entity_id: light.dimmer_sw_02_reception_1
         domain: light
-        brightness_pct: 10
-      - type: turn_on
+      - type: turn_off
         device_id: c07f1131739f49b8870493d0f3f87921
         entity_id: light.dimmer_sw04_reception_2
         domain: light
-        brightness_pct: 10
+      - service: light.turn_off
+        data: {}
+        entity_id: light.dining_virtual_light
     default: []
   mode: restart
 - id: '1610156397934'
   alias: Reception Night, Off
-  description: at end of day set all Reception lights to 10%
+  description: at end of day turn off SW2, SW4, & Diningroom Linears
   trigger:
   - platform: time
     at: input_datetime.end_of_day
   condition: []
   action:
-  - type: turn_on
-    device_id: beb9b468154c4396b28e6263a9c29d5d
-    entity_id: light.sw_1_reception
-    domain: light
-    brightness_pct: 10
-  - type: turn_on
+  - type: turn_off
     device_id: 2ecd50f291d945bfb07188db003348f3
     entity_id: light.dimmer_sw_02_reception_1
     domain: light
-    brightness_pct: 10
-  - type: turn_on
+  - type: turn_off
     device_id: c07f1131739f49b8870493d0f3f87921
     entity_id: light.dimmer_sw04_reception_2
     domain: light
-    brightness_pct: 10
+  - service: light.turn_off
+    data: {}
+    entity_id: light.dining_virtual_light
   mode: single
 - id: '1610156904477'
   alias: Bathroom, Women's
   description: when motion is detected, set SW9 to 100%, wait 10 minutes check again.  if
-    no motion set SW9 to 20%, wait 10 minutes check again, if no motion turn off SW9
+    no motion set SW9 to off
   trigger:
   - type: turned_on
     platform: device
@@ -501,8 +484,8 @@
   mode: restart
 - id: '1610157048182'
   alias: Bathroom, Men's
-  description: when motion is detected, set SW8 to 100%, wait 10 minutes check again.  if
-    no motion set SW8 to 20%, wait 10 minutes check again, if no motion turn off SW8
+  description: when motion is detected, set SW8 to 100%, wait 12 minutes check again.  if
+    no motion set SW8 to off
   trigger:
   - type: turned_on
     platform: device
@@ -516,7 +499,7 @@
     entity_id: light.dimmer_sw08_mensbr
     domain: light
     brightness_pct: 100
-  - delay: 00:10:00
+  - delay: 00:12:00
   - choose:
     - conditions:
       - type: is_on
@@ -546,7 +529,7 @@
 - id: '1610157696796'
   alias: Mini Conf 1 Daytime
   description: Between start of day and start of evening, when motion is detected,
-    SW10 @ 65.  Wait 30 minutes, check MS7
+    SW10 @ 100.  Wait 30 minutes, check MS7
   trigger:
   - type: turned_on
     platform: device
@@ -562,7 +545,7 @@
     device_id: 25ca15c6904541f9b6f7a6b8785a7fa4
     entity_id: light.dimmer_sw10_miniconf_1
     domain: light
-    brightness_pct: 65
+    brightness_pct: 100
   - delay: 00:30:00
   - choose:
     - conditions:
@@ -579,7 +562,7 @@
         device_id: 25ca15c6904541f9b6f7a6b8785a7fa4
         entity_id: light.dimmer_sw10_miniconf_1
         domain: light
-        brightness_pct: 65
+        brightness_pct: 100
     - conditions:
       - type: is_off
         condition: device
@@ -637,11 +620,10 @@
         entity_id: binary_sensor.ms07_motion_miniconf1
         domain: binary_sensor
       sequence:
-      - type: turn_on
+      - type: turn_off
         device_id: 25ca15c6904541f9b6f7a6b8785a7fa4
         entity_id: light.dimmer_sw10_miniconf_1
         domain: light
-        brightness_pct: 10
     default: []
   mode: restart
 - id: '1610158190684'
@@ -710,7 +692,7 @@
 - id: '1610161565440'
   alias: Office 2 Daytime
   description: Between start of day and start of evening, when motion is detected,
-    SW12 @ 65.  Wait 30 minutes, if no motion set SW12 to off
+    SW12 @ 100.  Wait 30 minutes, if no motion set SW12 to off
   trigger:
   - type: turned_on
     platform: device
@@ -726,7 +708,7 @@
     device_id: beb47bc78aea4a1e93e84f0747e65bcf
     entity_id: light.dimmer_sw12_office_2
     domain: light
-    brightness_pct: 65
+    brightness_pct: 100
   - delay: 00:30:00
   - choose:
     - conditions:
@@ -743,7 +725,7 @@
         device_id: beb47bc78aea4a1e93e84f0747e65bcf
         entity_id: light.dimmer_sw12_office_2
         domain: light
-        brightness_pct: 65
+        brightness_pct: 100
     - conditions:
       - type: is_off
         condition: device
@@ -760,7 +742,7 @@
 - id: '1610161749271'
   alias: Office 2 Evening
   description: Between start of evening and end of day, when motion is detected, SW12
-    @ 100.  Wait 30 minutes, if no motion set SW12 to 10%
+    @ 100.  Wait 30 minutes, if no motion set SW12 to Off
   trigger:
   - type: turned_on
     platform: device
@@ -1035,7 +1017,7 @@
 - id: '1610164311468'
   alias: Storage Daytime
   description: Between start of day and start of evening, when motion is detected,
-    SW13 @ 65.  Wait 30 minutes, if no motion set SW13 to off
+    SW13 @ 100.  Wait 30 minutes, if no motion set SW13 to off
   trigger:
   - type: turned_on
     platform: device
@@ -1051,7 +1033,7 @@
     device_id: 498d23f2bd884600911e128580deebd4
     entity_id: light.dimmer_sw13_storage_room
     domain: light
-    brightness_pct: 65
+    brightness_pct: 100
   - delay: 00:30:00
   - choose:
     - conditions:
@@ -1068,7 +1050,7 @@
         device_id: 498d23f2bd884600911e128580deebd4
         entity_id: light.dimmer_sw13_storage_room
         domain: light
-        brightness_pct: 65
+        brightness_pct: 100
     - conditions:
       - type: is_off
         condition: device
@@ -1085,7 +1067,7 @@
 - id: '1610167997371'
   alias: Storage Evening
   description: Between start of evening and end of day, when motion is detected, SW13
-    @ 100.  Wait 30 minutes, if no motion set SW13 to 0%
+    @ 100.  Wait 30 minutes, if no motion turn off SW13
   trigger:
   - type: turned_on
     platform: device
@@ -1234,4 +1216,34 @@
   condition: []
   action:
   - scene: scene.night
+  mode: single
+- id: '1611182442012'
+  alias: Switch 1 Feedback Turn On
+  description: ''
+  trigger:
+  - platform: device
+    type: turned_on
+    device_id: beb9b468154c4396b28e6263a9c29d5d
+    entity_id: light.sw_1_reception
+    domain: light
+  condition: []
+  action:
+  - service: light.turn_on
+    data: {}
+    entity_id: light.dining_virtual_light
+  mode: single
+- id: '1611182490258'
+  alias: Switch 1 Feedback Turn Off
+  description: ''
+  trigger:
+  - platform: device
+    type: turned_off
+    device_id: beb9b468154c4396b28e6263a9c29d5d
+    entity_id: light.sw_1_reception
+    domain: light
+  condition: []
+  action:
+  - service: light.turn_off
+    data: {}
+    entity_id: light.dining_virtual_light
   mode: single
