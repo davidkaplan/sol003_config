@@ -2,13 +2,6 @@ import appdaemon.plugins.hass.hassapi as hass
 import time
 import pprint
 import datetime
-#
-# Hellow World App
-#
-# Args:
-#
-
-# tie switches 07 15 16 together
 
 _TIMEOUT = 3
 
@@ -207,7 +200,7 @@ class LightGroups:
         return iter(self.lightGroups)
 
 
-class HelloWorld(hass.Hass):
+class VirtualLightsSync(hass.Hass):
 
     def initialize(self):
         self.log("Light Switching App")
@@ -221,9 +214,6 @@ class HelloWorld(hass.Hass):
         self.hassFuncs.turn_off = hass.Hass.turn_off
         self.hassFuncs.log = hass.Hass.log
 
-        #self.groups = {}
-        #self.all_entities = []
-        #self.lightGroups = []
         for name, data in self.raw_groups.items():
             self.log(name + ' (' + data['attributes']['friendly_name'] + ')')
             ids = data['attributes']['entity_id']
@@ -278,46 +268,6 @@ class HelloWorld(hass.Hass):
             return
         entity.handle(state, target_brightness)
 
-        # Make sure it's been a few seconds since entity's last state change        
-        # if not entity.isTimedOut():
-        #     return
-
-        # group = self.lightGroups.getGroupByEntity(id)
-        # id = group.id
-
-        # self.log('light parent is: ' + id)
-
-        # if target_brigtness == group.brightness:
-        #     return
-
-        # if not group.isTimedOut():
-        #     return
-
-        # if state == 'off':
-        #     self.turnOff(id)
-        # elif state == 'on':
-        #     self.turnOn(id, target_brightness)
-
-        # get parent light group of entity
-        # service call set brightness on light group
-        # set target brightness on group and all child entity objects
-        # reset timeout time
-        #
-        #
-        # current = data['old_state']['attributes']['brightness']
-        # i = 0
-        # self.log('Target: ' + str(target_brightness))
-        # while True:
-        #     self.log(str(i) + ' brightness: ' + str(current))
-        #     if target_brightness == current:
-        #         break
-        #     current = self.get_state(entity_id=id, attribute='brightness')
-        #     i += 1
-        #     if i > 2000:
-        #         self.log('DEBUG: Reached endless loop')
-        #         break
-
-
     def handleCallService(self, event_name, data, kwargs):
         # group call service
         if not data['domain'] == 'light':
@@ -337,14 +287,6 @@ class HelloWorld(hass.Hass):
             #raise
             return
         group.handle(service, brightness)
-        # if service == 'turn_off':
-        #     self.turnOff(id)
-        # if service == 'turn_on':
-        #     brightness = data['service_data']['brightness_pct']
-        #     self.turnOn(id, brightness)
-
-        #self.log(data)
-        #self.log(kwargs)
 
     # def turnOff(self, id):
     #     pass
