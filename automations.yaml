@@ -1141,8 +1141,7 @@
     group
   trigger:
   - platform: state
-    entity_id: switch.test_switch
-    from: 'off'
+    entity_id: switch.switch_sw_16_open_office
     to: 'on'
   condition: []
   action:
@@ -1156,8 +1155,7 @@
     group
   trigger:
   - platform: state
-    entity_id: switch.test_switch
-    from: 'on'
+    entity_id: switch.switch_sw_16_open_office
     to: 'off'
   condition: []
   action:
