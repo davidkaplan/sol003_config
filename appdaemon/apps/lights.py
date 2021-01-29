@@ -3,7 +3,8 @@ import time
 import pprint
 import datetime
 
-_TIMEOUT = 3
+_TIMEOUT = 4
+LOG_LEVEL = "DEBUG"
 
 class HassInterface:
     def __init__(self):
@@ -26,7 +27,6 @@ class LightEntity():
         #self.target_brightness = self.brightness
         #self._blocked = False
         self.time = datetime.datetime.now()
-        self.log('test contructor')
 
     def initialize(self):
         self.log('test test')
@@ -38,14 +38,18 @@ class LightEntity():
     #     return (self.brightness == self.get_state(entity_id=self.id, attribute='brightness'))
 
     def setCurrentTime(self):
+        self.log("Setting time to zero for: " + self.id, level="DEBUG")
         self.time = datetime.datetime.now()
+        self.log(self.time, level="DEBUG")
 
     def isTimedOut(self):
         seconds = (datetime.datetime.now() - self.time).total_seconds()
+        self.log(self.id + ': ' + str(datetime.datetime.now()) + ' - ' + str(self.time) + ' = ' + str(seconds))
         if seconds >= _TIMEOUT:
-            self.log('WARNING Timeout reached waiting for light to reach target value')
+            self.log('Timeout reached waiting for light to reach target value, proceeding', level="DEBUG")
             return True
         else:
+            self.log('Timeout not yet met (too soon), aborting', level="DEBUG")
             return False
 
     # def isBlocked(self):
@@ -98,8 +102,8 @@ class LightEntity():
     # def unlock(self):
     #     self._locked = False
     
-    def log(self, str):
-        self._log(str)
+    def log(self, *args,**kwargs):
+        self._log(*args,**kwargs)
 
     def __str__(self):
         return self.id
@@ -145,10 +149,11 @@ class LightGroup(LightEntity):
             entity.setCurrentTime()
 
         if command == 'on':
-            pass
+            self.log('LightGroup/handle on ' + self.id + ' ' + str(brightness), level="DEBUG")
+            self.turnOn(brightness=brightness)
 
         if command == 'off':
-            pass
+            self.turnOff()
 
     def __len__(self):
         return len(self.entities)
@@ -203,8 +208,9 @@ class LightGroups:
 class VirtualLightsSync(hass.Hass):
 
     def initialize(self):
+        self.set_log_level(LOG_LEVEL)
         self.log("Light Switching App")
-        self.listen_event(self.handleStateChange, "state_changed")#, entity_id="light.test_1_dimmer_level")
+        self.listen_event(self.handleStateChange, "state_changed")
         self.listen_event(self.handleCallService, "call_service")
         self.raw_groups = self.get_state("group")
         self.lightGroups = LightGroups()
@@ -229,11 +235,10 @@ class VirtualLightsSync(hass.Hass):
         self.log(self.lightGroups.getAllEntities())
         #self.log(pprint.pprint(self.groups))
         self.log('Initialization Complete')
-        #self.run_in(self.timeTest, 5)
         self.info()
         
     def info(self):
-        self.log(len(self.lightGroups))
+        self.log("Number of groups found: " + str(len(self.lightGroups)))
         for group in self.lightGroups:
             self.log('LightGroup:\n' + str(group))
     
@@ -245,16 +250,24 @@ class VirtualLightsSync(hass.Hass):
     #     b = self.get_state(entity_id=entity, attribute='brightness')
     #     self.log('checkBrightness entity ' + entity + ' ' + str(b))
     #     return (b == target)
+    
+    def parseStateData(self, data):
+        state = data['new_state']['state']
+        try:
+            brightness =  str(data['new_state']['attributes']['brightness'])
+        except KeyError:
+            brightness = "None"
+        return str("state: " + state + ", brightness: " + brightness)
 
     def handleStateChange(self, event_name, data, kwargs):
         # entity state changed
         if data['entity_id'] not in self.lightGroups.getAllEntities():
             return
         id = data['entity_id']
-        self.log("state_changed event on: " + id)
-        #self.log(event_name)
-        #self.log(data)
-        #self.log(kwargs)
+        self.log("state_changed event on entity: " + id)
+        #self.log(event_name, level="DEBUG")
+        self.log(self.parseStateData(data), level="DEBUG")
+        #self.log(kwargs, level="DEBUG")
     
         state = data['new_state']['state'] # 'on' or 'off'
         try:
@@ -264,10 +277,15 @@ class VirtualLightsSync(hass.Hass):
 
         entity = self.lightGroups.getEntity(id)
         if entity is None:
-            self.log("error got null entity")
+            self.log("error got null entity, returning")
             return
+        self.log("VirtualLightsSync/handleStateChange/entity.handle(), entity=" + id + \
+            ", brightness=" + str(target_brightness), level="DEBUG")
         entity.handle(state, target_brightness)
 
+    def parseCallData(self, data):
+        pass
+        
     def handleCallService(self, event_name, data, kwargs):
         # group call service
         if not data['domain'] == 'light':
@@ -275,17 +293,28 @@ class VirtualLightsSync(hass.Hass):
         id = data['service_data']['entity_id']
         if id not in self.lightGroups.getAllEntities():
             return
-        self.log(event_name)
-        self.log(data)
-        self.log(kwargs)
         self.log("call_service event on: " + id)
+        #self.log(event_name, level="DEBUG")
+        self.log(data, level="DEBUG")
+        #self.log(kwargs, level="DEBUG")
         service = data['service'].lstrip('turn_') # 'turn_on' or 'turn_off'
         brightness = 0
-        group = self.lightGroups.getGroup(id)
+        if 'brightness' in data['service_data'].keys():
+            brightness = data['service_data']['brightness']
+        elif 'brightness_pct' in data['service_data'].keys():
+            brightness_pct = data['service_data']['brightness_pct']
+            brightness = brightness_pct * (255/100)
+        else:
+            self.log("No attributes brightness or brightness_pct found, " + id)
+            self.log("Is brigthness supposed to be zero?")
+
+        group = self.lightGroups.getGroupByEntity(id)
+        #group = self.lightGroups.getGroup(id)
         if group is None:
             self.log("error got null group")
             #raise
             return
+        self.log("VirtualLightsSync/handleCallService/group.handle(), group=" + group.id, level="DEBUG")
         group.handle(service, brightness)
 
     # def turnOff(self, id):
