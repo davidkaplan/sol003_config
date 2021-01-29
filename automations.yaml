@@ -455,32 +455,11 @@
     entity_id: light.dimmer_sw09_womensbr
     domain: light
     brightness_pct: 100
-  - delay: 00:10:00
-  - choose:
-    - conditions:
-      - type: is_on
-        condition: device
-        device_id: b00c21ce29834e86b0a4719cce48d2b4
-        entity_id: binary_sensor.ms11_motion_womenbr
-        domain: binary_sensor
-      sequence:
-      - type: turn_on
-        device_id: d709fea1113e447d96478c10b195a79e
-        entity_id: light.dimmer_sw09_womensbr
-        domain: light
-        brightness_pct: 100
-    - conditions:
-      - type: is_off
-        condition: device
-        device_id: b00c21ce29834e86b0a4719cce48d2b4
-        entity_id: binary_sensor.ms11_motion_womenbr
-        domain: binary_sensor
-      sequence:
-      - type: turn_off
-        device_id: d709fea1113e447d96478c10b195a79e
-        entity_id: light.dimmer_sw09_womensbr
-        domain: light
-    default: []
+  - delay: 00:12:00
+  - type: turn_off
+    device_id: d709fea1113e447d96478c10b195a79e
+    entity_id: light.dimmer_sw09_womensbr
+    domain: light
   mode: restart
 - id: '1610157048182'
   alias: Bathroom, Men's
@@ -500,31 +479,10 @@
     domain: light
     brightness_pct: 100
   - delay: 00:12:00
-  - choose:
-    - conditions:
-      - type: is_on
-        condition: device
-        device_id: 748d3a8cb28a4eb6bdc862245d81e78b
-        entity_id: binary_sensor.ms12_motion_menbr
-        domain: binary_sensor
-      sequence:
-      - type: turn_on
-        device_id: 0cba7bfe823945f2a15f946e92e29500
-        entity_id: light.dimmer_sw08_mensbr
-        domain: light
-        brightness_pct: 100
-    - conditions:
-      - type: is_off
-        condition: device
-        device_id: 748d3a8cb28a4eb6bdc862245d81e78b
-        entity_id: binary_sensor.ms12_motion_menbr
-        domain: binary_sensor
-      sequence:
-      - type: turn_off
-        device_id: 0cba7bfe823945f2a15f946e92e29500
-        entity_id: light.dimmer_sw08_mensbr
-        domain: light
-    default: []
+  - type: turn_off
+    device_id: 0cba7bfe823945f2a15f946e92e29500
+    entity_id: light.dimmer_sw08_mensbr
+    domain: light
   mode: restart
 - id: '1610157696796'
   alias: Mini Conf 1 Daytime
