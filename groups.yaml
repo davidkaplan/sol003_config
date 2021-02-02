@@ -1,7 +1,6 @@
-open_office_light_group:
-  name: Open Office Light Group
+inner_office_light_group:
+  name: Inner Office Fixtures Group
   entities:
-    - light.office_virtual_light
     - light.dimmer_sw_15_open_office
     - light.dimmer_sw_07_open_office
 
