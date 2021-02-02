@@ -4,11 +4,11 @@ mqtt:
 
 
 sensor:
-  - platform: mqtt
-    name: ZWaveNode_2
-    state_topic: "OpenZWave/1/node/2/instance/1/commandclass/114/value/1125899954847767/"
-    value_template: '{{ value_json.Value }}'
-    unique_id: ZWaveNode_2
+#   - platform: mqtt
+#     name: ZWaveNode_2
+#     state_topic: "OpenZWave/1/node/2/instance/1/commandclass/114/value/1125899954847767/"
+#     value_template: '{{ value_json.Value }}'
+#     unique_id: ZWaveNode_2
     
   - platform: time_date
     display_options:
@@ -21,7 +21,6 @@ sensor:
       - 'time_utc'
       - 'beat'
 
-          
 # Configure a default setup of Home Assistant (frontend, api, etc)
 default_config:
 
@@ -35,18 +34,18 @@ script: !include scripts.yaml
 scene: !include scenes.yaml
 light: !include lights.yaml
 
-# for testing
-switch:
-  - platform: template
-    switches:
-      test_switch:
-        friendly_name: "Test Switch Office"
-        turn_on:
-          #service: switch.turn_on
-          #data:
-          #  entity_id: switch.skylight_open
-        turn_off:
-          #service: switch.turn_off
-          #data:
-          #  entity_id: switch.skylight_close
+# # for testing
+# switch:
+#   - platform: template
+#     switches:
+#       test_switch:
+#         friendly_name: "Test Switch Office"
+#         turn_on:
+#           #service: switch.turn_on
+#           #data:
+#           #  entity_id: switch.skylight_open
+#         turn_off:
+#           #service: switch.turn_off
+#           #data:
+#           #  entity_id: switch.skylight_close
 
