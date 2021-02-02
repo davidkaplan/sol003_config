@@ -3,7 +3,7 @@ import time
 import pprint
 import datetime
 
-_TIMEOUT = 4
+_TIMEOUT = 0
 LOG_LEVEL = "DEBUG"
 
 class HassInterface:
@@ -26,7 +26,7 @@ class LightEntity():
         #self.updateBrightness()
         #self.target_brightness = self.brightness
         #self._blocked = False
-        self.time = datetime.datetime.now()
+        self.time = datetime.datetime.now() - datetime.timedelta(seconds=_TIMEOUT)
 
     def initialize(self):
         self.log('test test')
@@ -85,7 +85,7 @@ class LightEntity():
             return
 
         self.setCurrentTime()
-        self.parent.handle(command, brightness)
+        #self.parent.handle(command, brightness)
 
         if command == 'on':
             self.parent.turnOn(brightness)
@@ -171,13 +171,18 @@ class LightGroups:
     def __init__(self):
         self.lightGroups = []
         self.allEntityNames = []
+        self.allGroupNames = []
 
     def addGroup(self, group):
         self.lightGroups.append(group)
         self.allEntityNames += [x.id for x in group.entities]
+        self.allGroupNames += group.id
 
-    def getAllEntities(self):
-        return self.allEntityNames
+    def getAllEntities(self, includeGroups=False):
+        ret = self.allEntityNames
+        if includeGroups:
+            ret += self.allGroupNames
+        return ret
 
     def getGroupByEntity(self, id):
         for group in self.lightGroups:
@@ -268,6 +273,13 @@ class VirtualLightsSync(hass.Hass):
         #self.log(event_name, level="DEBUG")
         self.log(self.parseStateData(data), level="DEBUG")
         #self.log(kwargs, level="DEBUG")
+        
+        # filter out non-physical button press state changes
+        user = data['new_state']['context']['user_id']
+        #self.log("user_id: " + str(user), level="DEBUG")
+        if user is not None:
+            self.log('state change has user (came from digital command, not physical). returning.')
+            return
     
         state = data['new_state']['state'] # 'on' or 'off'
         try:
@@ -282,16 +294,13 @@ class VirtualLightsSync(hass.Hass):
         self.log("VirtualLightsSync/handleStateChange/entity.handle(), entity=" + id + \
             ", brightness=" + str(target_brightness), level="DEBUG")
         entity.handle(state, target_brightness)
-
-    def parseCallData(self, data):
-        pass
         
     def handleCallService(self, event_name, data, kwargs):
         # group call service
         if not data['domain'] == 'light':
             return
         id = data['service_data']['entity_id']
-        if id not in self.lightGroups.getAllEntities():
+        if id not in self.lightGroups.getAllEntities(includeGroups=False):
             return
         self.log("call_service event on: " + id)
         #self.log(event_name, level="DEBUG")
@@ -309,11 +318,17 @@ class VirtualLightsSync(hass.Hass):
             self.log("Is brigthness supposed to be zero?")
 
         group = self.lightGroups.getGroupByEntity(id)
-        #group = self.lightGroups.getGroup(id)
         if group is None:
-            self.log("error got null group")
+            self.log("error got null group, returning.")
             #raise
             return
+        self.log("handleCallService groupEntity=" + group.id, level="DEBUG")
+        # group = self.lightGroups.getGroup(id)
+        # if group is None:
+        #     self.log("error got null group")
+        #     #raise
+        #     return
+        # self.log("handleCallService justGroup=" + group.id, level="DEBUG")
         self.log("VirtualLightsSync/handleCallService/group.handle(), group=" + group.id, level="DEBUG")
         group.handle(service, brightness)
 
