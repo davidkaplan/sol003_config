@@ -126,11 +126,16 @@
   mode: restart
 - id: '1610142928430'
   alias: Kitchen Night, Off
-  description: At end of day, turn off SW6 and Dining Room Linear
+  description: At end of day, turn off SW6
   trigger:
   - platform: time
     at: input_datetime.end_of_day
-  condition: []
+  condition:
+  - type: is_off
+    condition: device
+    device_id: 0d3281fa10024e37977b028b44d3b631
+    entity_id: binary_sensor.ms01_motion_kitchen
+    domain: binary_sensor
   action:
   - type: turn_off
     device_id: 17c07adcead245e89b654542c0ab131b
@@ -424,7 +429,12 @@
   trigger:
   - platform: time
     at: input_datetime.end_of_day
-  condition: []
+  condition:
+  - type: is_off
+    condition: device
+    device_id: aae446d02a094b2e8c75c947e026a89e
+    entity_id: binary_sensor.ms02_motion_reception
+    domain: binary_sensor
   action:
   - type: turn_off
     device_id: 2ecd50f291d945bfb07188db003348f3
@@ -640,7 +650,12 @@
   trigger:
   - platform: time
     at: input_datetime.end_of_day
-  condition: []
+  condition:
+  - type: is_off
+    condition: device
+    device_id: 4a2e08f77bed469781cbcc6ef159cb21
+    entity_id: binary_sensor.ms07_motion_miniconf1
+    domain: binary_sensor
   action:
   - type: turn_off
     device_id: 25ca15c6904541f9b6f7a6b8785a7fa4
@@ -803,7 +818,12 @@
   trigger:
   - platform: time
     at: input_datetime.end_of_day
-  condition: []
+  condition:
+  - type: is_off
+    condition: device
+    device_id: 7bc41a357dd4494f9c3b58dda6e447bf
+    entity_id: binary_sensor.ms09_motion_office2
+    domain: binary_sensor
   action:
   - type: turn_off
     device_id: beb47bc78aea4a1e93e84f0747e65bcf
@@ -965,7 +985,12 @@
   trigger:
   - platform: time
     at: input_datetime.end_of_day
-  condition: []
+  condition:
+  - type: is_off
+    condition: device
+    device_id: d57a130fa92e4c31b06525de113533bf
+    entity_id: binary_sensor.ms08_motion_miniconf2
+    domain: binary_sensor
   action:
   - type: turn_off
     device_id: 35a658320aa44eaca0ed3517731cfa44
@@ -1078,7 +1103,12 @@
   trigger:
   - platform: time
     at: input_datetime.end_of_day
-  condition: []
+  condition:
+  - type: is_off
+    condition: device
+    device_id: b9520fd9ef7f4f6787955beea866f9f4
+    entity_id: binary_sensor.ms10_motion_storage
+    domain: binary_sensor
   action:
   - type: turn_off
     device_id: 498d23f2bd884600911e128580deebd4
@@ -1163,16 +1193,6 @@
     data: {}
     entity_id: light.office_virtual_light
   mode: single
-- id: '1610765351173'
-  alias: Night Time Daily Scene
-  description: ''
-  trigger:
-  - platform: time
-    at: input_datetime.end_of_day
-  condition: []
-  action:
-  - scene: scene.night
-  mode: single
 - id: '1611182442012'
   alias: Switch 1 Feedback Turn On
   description: ''
@@ -1202,4 +1222,31 @@
   - service: light.turn_off
     data: {}
     entity_id: light.dining_virtual_light
+  mode: single
+- id: '1612137307708'
+  alias: Bathrooms Night, Off
+  description: ''
+  trigger:
+  - platform: time
+    at: input_datetime.end_of_day
+  condition:
+  - type: is_off
+    condition: device
+    device_id: b00c21ce29834e86b0a4719cce48d2b4
+    entity_id: binary_sensor.ms11_motion_womenbr
+    domain: binary_sensor
+  - type: is_off
+    condition: device
+    device_id: 748d3a8cb28a4eb6bdc862245d81e78b
+    entity_id: binary_sensor.ms12_motion_menbr
+    domain: binary_sensor
+  action:
+  - type: turn_off
+    device_id: 0cba7bfe823945f2a15f946e92e29500
+    entity_id: light.dimmer_sw08_mensbr
+    domain: light
+  - type: turn_off
+    device_id: d709fea1113e447d96478c10b195a79e
+    entity_id: light.dimmer_sw09_womensbr
+    domain: light
   mode: single
